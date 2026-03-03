@@ -20,11 +20,9 @@ jobs:
           node-version: 18
 
       - name: Install backend dependencies
-        working-directory: ./express-api-portfolio
         run: npm install
 
       - name: Start API server
-        working-directory: ./express-api-portfolio
         run: |
           nohup node server.js &
           sleep 3
