@@ -1,0 +1,49 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install backend dependencies
+        working-directory: ./express-api-portfolio
+        run: npm install
+
+      - name: Start API server
+        working-directory: ./express-api-portfolio
+        run: |
+          nohup node server.js &
+          sleep 3
+
+      - name: Install Playwright dependencies
+        working-directory: ./playwright-portfolio
+        run: npm install
+
+      - name: Install Playwright browsers
+        working-directory: ./playwright-portfolio
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        working-directory: ./playwright-portfolio
+        run: npx playwright test
+
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-portfolio/playwright-report
